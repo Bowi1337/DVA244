@@ -22,19 +22,19 @@ typedef int Data;
 
 
 /*Valj denna struktdefinition om du vill implementera en dubbellankad lista*/
-/*struct node
-{
-    Data data;
-    struct node *next;
-    struct node *previous;
-};*/
-
-/*Valj denna struktdefinition om du vill implementera en enkellankad lista*/
 struct node
 {
     Data data;
     struct node *next;
+    struct node *previous;
 };
+
+/*Valj denna struktdefinition om du vill implementera en enkellankad lista*/
+/*struct node
+{
+    Data data;
+    struct node *next;
+};*/
 
 //Listan representeras av en nodpekare
 typedef struct node *List;
