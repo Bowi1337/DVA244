@@ -11,24 +11,29 @@ Set initializeSet(void)
    Postcondition: 'element' finns i set (tips: anvand isInSet() for att verifiera) */
 void addToSet(Set* set, const Data element)
 {
-        
+    if(isInSet(*set, element)){
+        return;
+    }
+    addFirst(set, element);
+    assert(isInSet(*set, element));
 }
 
 /* Postcondition: 'element' finns INTE i set (tips: anvand isInSet() for att verifiera) */
 void removeFromSet(Set* set, const Data element)
 {
-    
+    removeElement(set, element);
+    assert(!isInSet(*set, element));
 }
 
 
 int isInSet(const Set set, const Data element)
 {
-    return 0; // Ersatt med ratt returvarde
+    return search(set, element); // Ersatt med ratt returvarde
 }
 
 /* Anvands for testning och felsokning */
 void printSet(const Set set, FILE *textfile)
 {
-    
+    printList(set, textfile);
 }
 

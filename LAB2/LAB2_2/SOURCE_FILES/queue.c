@@ -13,33 +13,36 @@ Queue initializeQueue(void)
 
 int queueIsEmpty(const Queue queue)
 {
-    return 0;	// Ersatt med ratt returvarde
+    return isEmpty(queue);	// Ersatt med ratt returvarde
 }
 
 /*Postcondition: data ar tillagt sist i kon*/
 void enqueue(Queue* queue, const Data data)
 {
-   //Tips: Att lagga till i en ko implementerad som en lankad lista ar precis som att lagga till forst eller sist i en lankad lista
+    addLast(queue, data);
+    assert(getLastElement(*queue) == data);
 }
 
-/* Precondition: kon Šr ej tom */
+/* Precondition: kon ï¿½r ej tom */
 void dequeue(Queue* queue)
 {
-    //Tips: Att ta bort fran en ko implementerad som en lankad lista ar precis som att ta bort sist eller forst i en lankad lista.
+    assert(*queue != NULL);
+    removeFirst(queue);
 }
 
-/* Precondition: kon Šr ej tom */
+/* Precondition: kon ï¿½r ej tom */
 Data peekQueue(const Queue queue)
 {
-    return 0;	// Ersatt med ratt returvarde
+    assert(queue != NULL);
+    return getFirstElement(queue);	// Ersatt med ratt returvarde
 }
 
 
 /* Anvands for testning och felsokning
-   Tips: det kan vara bra att ocksa notera i utskriften vart borjan respektive slutet pŒ kon Šr */
+   Tips: det kan vara bra att ocksa notera i utskriften vart borjan respektive slutet pï¿½ kon ï¿½r */
 void printQueue(const Queue queue, FILE *textfile)
 {
-    
+    printList(queue, textfile);
 }
 
 

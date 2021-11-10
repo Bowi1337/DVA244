@@ -21,7 +21,9 @@ void testFunctionSet();
 
 int main(void)
 {
-
+    testFunctionStack();
+    testFunctionQueue();
+    testFunctionSet();
     return 0;
 }
 
