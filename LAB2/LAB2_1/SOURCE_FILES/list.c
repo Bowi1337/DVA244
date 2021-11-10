@@ -11,10 +11,14 @@
 static struct node *createListNode(const Data data)
 {
   //Glom inte att testa sa att allokeringen lyckades innan du initierar noden
+
+  //Allocate memmory for one node
   struct node *newNode = (struct node *)malloc(sizeof(struct node));
   if (newNode != NULL)
   {
+    //Assign data to node
     newNode->data = data;
+    //return new node
     return newNode;
   }
   printf("%s", "Memmory allocation failed.");
@@ -31,31 +35,37 @@ List createEmptyList(void)
   Returnerar 1 om den �r tom, annars 0*/
 int isEmpty(const List list)
 {
+  //If the head is NULL => list is empty
   if (list == NULL)
   {
     return 1;
   }
-  return 0; //ersatt med ratt returvarde
+  return 0;
 }
 
 /*Lagg till nod forst i listan*/
 /*Postcondition: Det nya datat ligger forst i listan (testa med assert)*/
 void addFirst(List *list, const Data data)
 {
+  //Create new node to work with
   struct node *newNode = createListNode(data);
   if (newNode != NULL)
   {
+    //If the list is empty, replace head with node.
     if (*list == NULL)
     {
       *list = newNode;
+      return;
     }
-    else
-    {
-      struct node *temp = *list;
-      *list = newNode;
-      newNode->next = temp;
-      newNode->next->previous = newNode;
-    }
+    //Set the head to a temporary variable
+    struct node *temp = *list;
+
+    //set the head to the new node
+    *list = newNode;
+
+    //link the first node to the new first node
+    newNode->next = temp;
+    newNode->next->previous = newNode;
   }
   //Anropa createListNode for att skapa den nya noden
   //Glom inte att testa att den nya noden faktiskt kunde skapas/tilldelas minne innan du fortsatter
@@ -66,21 +76,24 @@ void addFirst(List *list, const Data data)
   Tips, nar du hittat ratt plats kan du anvanda funktionen addFirst for att lagga till*/
 void addLast(List *list, const Data data)
 {
+  //Create new node to work with
   struct node *newNode = createListNode(data);
   if (newNode != NULL)
   {
+    //If the list is empty, replace head with node.
     if (*list == NULL)
     {
       *list = newNode;
+      return;
     }
-    else
-    {
-      struct node *lastNode;
-      for (lastNode = *list; lastNode->next != NULL; lastNode = lastNode->next)
-        ;
-      lastNode->next = newNode;
-      newNode->previous = lastNode;
-    }
+    //Loop untill last node's next node is null => we are on the last node.
+    struct node *lastNode;
+    for (lastNode = *list; lastNode->next != NULL; lastNode = lastNode->next)
+      ;
+    
+    //link the last node with the new last node
+    lastNode->next = newNode;
+    newNode->previous = lastNode;
   }
 }
 
@@ -92,18 +105,24 @@ void removeFirst(List *list)
   assert(*list != NULL);
   //Glom inte att frigora minnet for den nod som lankas ur listan.
   //Tank pa att listans huvud efter bortlankningen maste peka pa den nod som nu ar forst.
+
+  //If there is only one node => remove it
   if ((*list)->next == NULL)
   {
     free(*list);
     *list = NULL;
+    return;
   }
-  else
-  {
-    struct node *temp = *list;
-    *list = (*list)->next;
-    free(temp);
-    (*list)->previous = NULL;
-  }
+
+  //create new temporary node ponter
+  struct node *temp = *list;
+
+  //Set the new head to next node
+  *list = (*list)->next;
+
+  //Remove the node
+  free(temp);
+  (*list)->previous = NULL;
 }
 
 /*Ta bort sista noden i listan
@@ -113,20 +132,22 @@ void removeLast(List *list)
   assert(*list != NULL);
   //Glom inte att frigora minnet for den nod som lankas ur listan.
   //Tank pa att den nod som nu ar sist inte pekar nagonstans, dess pekare maste nollstallas
+
+  //If there is only one node => remove it
   if ((*list)->next == NULL)
   {
     free(*list);
     *list = NULL;
+    return;
   }
-  else
-  {
-    struct node *lastNode;
-    for (lastNode = *list; lastNode->next != NULL; lastNode = lastNode->next)
-      ;
-    struct node *secondLastNode = lastNode->previous;
-    free(lastNode);
-    secondLastNode->next = NULL;
-  }
+    //Loop untill the node two nodes down is null => we are on the second last node.
+  struct node *secondLastNode;
+  for (secondLastNode = *list; secondLastNode->next->next != NULL; secondLastNode = secondLastNode->next)
+    ;
+  //remove the second last next node
+  free(secondLastNode->next);
+  secondLastNode->next = NULL;
+  
 }
 
 /*Ta bort data ur listan (forsta forekomsten)
@@ -134,27 +155,37 @@ void removeLast(List *list)
   Tips, nar du hittar ratt nod kan du anvanda en av de ovanstaende funktionerna for att ta bort noden*/
 int removeElement(List *list, const Data data)
 {
-  if(*list == NULL){
+  //If the list is empty, there is nothing to remove
+  if (*list == NULL)
+  {
     return 0;
   }
+  //Loop untill node->data is equal to data or we are on the last node
   struct node *nodeToRemove;
-  for (nodeToRemove = *list; nodeToRemove->data != data && nodeToRemove->next != NULL; nodeToRemove = nodeToRemove->next){
-    
-  }
+  for (nodeToRemove = *list; nodeToRemove->data != data && nodeToRemove->next != NULL; nodeToRemove = nodeToRemove->next)
     ;
+
+  //If the node->data we landed on is not equal to data => we culd not find the node
   if (nodeToRemove->data != data)
   {
     return 0;
   }
-  if(nodeToRemove->previous != NULL){
-  nodeToRemove->previous->next = nodeToRemove->next;
+  //If it is not the first node link the previous node
+  if (nodeToRemove->previous != NULL)
+  {
+    nodeToRemove->previous->next = nodeToRemove->next;
   }
-  else{
+  //If it is the first node, link the next node to the head. 
+  else
+  {
     *list = nodeToRemove->next;
   }
-  if(nodeToRemove->next != NULL){
+  //If it is not the last node, link the next node to the previous
+  if (nodeToRemove->next != NULL)
+  {
     nodeToRemove->next->previous = nodeToRemove->previous;
   }
+  //After all the relinking is done, remove the node
   free(nodeToRemove);
   return 1; //Ersatt med ratt returvarde
 }
@@ -164,12 +195,15 @@ int removeElement(List *list, const Data data)
   Tank pa att listan kan vara tom*/
 int search(const List list, const Data data)
 {
+  //If the list is empty => we cant find the node
   if (list == NULL)
     return 0;
 
+  //Loop untill node->data is equal to data or we are on the last node
   struct node *nodeToFind;
   for (nodeToFind = list; nodeToFind->data != data && nodeToFind->next != NULL; nodeToFind = nodeToFind->next)
     ;
+  //if the node->data we stoped on equals data => we found the node
   if (nodeToFind->data == data)
   {
     return 1;
@@ -180,17 +214,13 @@ int search(const List list, const Data data)
 /*Returnera antalet noder i listan*/
 int numberOfNodesInList(const List list)
 {
-  if (list == NULL)
-  {
-    return 0;
-  }
   int count = 0;
-
+  //loop thrugh the entire list incrementing 'count' every loop
+  //This also works for empty lists
   for (struct node *node = list; node != NULL; node = node->next)
   {
     count++;
   }
-
   return count;
 }
 
@@ -199,22 +229,29 @@ int numberOfNodesInList(const List list)
   Postcondition: Listan ar tom, *list �r NULL (testa med assert)*/
 void clearList(List *list)
 {
-  if(*list == NULL){
+  if (*list == NULL)
+  {
     return;
   }
   //Alla noder maste tas avallokeras en och en, det racker inte att endast frigora list.
+
+  //If there is only one node => remove it
   if ((*list)->next == NULL)
   {
     free(*list);
     *list = NULL;
+    assert(*list == NULL);
     return;
   }
-
+  //loop thrugh the entire list starting at the second node and stopping at the last node.
+  //in every loop => remove the previous node
   struct node *temp;
   for (temp = (*list)->next; temp->next != NULL; temp = temp->next)
   {
     free(temp->previous);
   }
+  //since we stoped att the last node, we did not remove the second last node
+  //remove the last node and second last node;
   free(temp->previous);
   free(temp);
   *list = NULL;
@@ -228,6 +265,14 @@ void clearList(List *list)
   Den har typen av utskriftfunktion blir mer generell da man kan valja att skriva ut till skarmen eller till fil.*/
 void printList(const List list, FILE *textfile)
 {
+  //Print array like [1, 2, 3, 4, 5, ...]
+  fprintf(textfile, "%s", "[");
+  struct node *node;
+  for (node = list; node->next != NULL; node = node->next)
+  {
+    fprintf(textfile, "%d, ", node->data);
+  }
+  fprintf(textfile, "%d]\r\n", node->data);
 }
 
 /*Returnera forsta datat i listan
@@ -235,6 +280,7 @@ void printList(const List list, FILE *textfile)
 Data getFirstElement(const List list)
 {
   assert(list != NULL);
+  //return first element data
   return list->data;
 }
 
@@ -243,8 +289,10 @@ Data getFirstElement(const List list)
 Data getLastElement(const List list)
 {
   assert(list != NULL);
+  //Loop untill last node
   struct node *lastNode;
   for (lastNode = list; lastNode->next != NULL; lastNode = lastNode->next)
     ;
+  //return last node data
   return lastNode->data; //Ersatt med ratt returvarde
 }
