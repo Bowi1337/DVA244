@@ -79,11 +79,11 @@ void dstring_truncate(DString *destination, unsigned int truncatedLength)
 		- glom inte nolltermineringen
 		Vad h�nder om truncateLength �r l�ngre �n vad str�ngen �r?
 	*/
-	DString temp = (DString)malloc(sizeof(DString) * (truncatedLength + 1));
+	DString temp = (DString)realloc(*destination, sizeof(DString) * (truncatedLength + 1));
 	if(temp != NULL){
 		strncpy(temp, *destination, (size_t)truncatedLength);
 		temp[truncatedLength] = '\0';
-		dstring_delete(destination);
+		//dstring_delete(destination);
 		*destination = temp;
 	}
 	else{
