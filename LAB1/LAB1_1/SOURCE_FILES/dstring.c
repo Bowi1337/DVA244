@@ -81,9 +81,7 @@ void dstring_truncate(DString *destination, unsigned int truncatedLength)
 	*/
 	DString temp = (DString)realloc(*destination, sizeof(DString) * (truncatedLength + 1));
 	if(temp != NULL){
-		strncpy(temp, *destination, (size_t)truncatedLength);
 		temp[truncatedLength] = '\0';
-		//dstring_delete(destination);
 		*destination = temp;
 	}
 	else{
