@@ -83,7 +83,8 @@ void addLast(List *list, const Data data)
     addFirst(list, data);
     return;
   }
-  if((*list)->next != NULL){
+  if ((*list)->next != NULL)
+  {
     addLast(&((*list)->next), data);
     return;
   }
@@ -140,15 +141,15 @@ void removeLast(List *list)
     removeFirst(list);
     return;
   }
-    //Loop untill the node two nodes down is null => we are on the second last node.
-  if((*list)->next->next != NULL){
+  //Loop untill the node two nodes down is null => we are on the second last node.
+  if ((*list)->next->next != NULL)
+  {
     removeLast(&((*list)->next));
     return;
   }
   //remove the second last next node
   free((*list)->next);
   (*list)->next = NULL;
-  
 }
 
 /*Ta bort data ur listan (forsta forekomsten)
@@ -162,7 +163,8 @@ int removeElement(List *list, const Data data)
     return 0;
   }
 
-  if((*list)->data != data && (*list)->next != NULL){
+  if ((*list)->data != data && (*list)->next != NULL)
+  {
     return removeElement(&((*list)->next), data);
   }
 
@@ -172,8 +174,8 @@ int removeElement(List *list, const Data data)
     //printList(*list, stdout);
     return 0;
   }
-  struct node* nodeToRemove = (*list);
-  
+  struct node *nodeToRemove = (*list);
+
   //If it is not the first node link the previous node
   if (nodeToRemove->previous != NULL)
   {
@@ -208,7 +210,8 @@ int search(const List list, const Data data)
     return 0;
 
   //Loop untill node->data is equal to data or we are on the last node
-  if(list->data != data && list->next != NULL){
+  if (list->data != data && list->next != NULL)
+  {
     return search(list->next, data);
   }
   //if the node->data we stoped on equals data => we found the node
@@ -222,7 +225,7 @@ int search(const List list, const Data data)
 /*Returnera antalet noder i listan*/
 int numberOfNodesInList(const List list)
 {
-  if(list == NULL)
+  if (list == NULL)
     return 0;
   else
     return 1 + numberOfNodesInList(list->next);
@@ -252,15 +255,16 @@ void clearList(List *list)
 void printList(const List list, FILE *textfile)
 {
   //Print array like [1, 2, 3, 4, 5, ...]
-  if(list->previous == NULL)
+  if (list->previous == NULL)
     fprintf(textfile, "%s", "[");
 
-  if(list->next != NULL){
+  if (list->next != NULL)
+  {
     fprintf(textfile, "%d, ", list->data);
     printList(list->next, textfile);
     return;
   }
-  if(list->next == NULL)
+  if (list->next == NULL)
     fprintf(textfile, "%d]\r\n", list->data);
 }
 
@@ -279,9 +283,12 @@ Data getLastElement(const List list)
 {
   assert(!isEmpty(list));
   //Loop untill last node
-  struct node *lastNode;
-  for (lastNode = list; lastNode->next != NULL; lastNode = lastNode->next)
-    ;
-  //return last node data
-  return lastNode->data; //Ersatt med ratt returvarde
+  if (list->next == NULL)
+  {
+    return list->data;
+  }
+  else
+  {
+    return getLastElement(list->next);
+  }
 }
