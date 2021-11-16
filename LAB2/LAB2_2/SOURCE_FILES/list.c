@@ -55,6 +55,7 @@ void addFirst(List *list, const Data data)
     if (*list == NULL)
     {
       *list = newNode;
+      assert(data == (*list)->data);
       return;
     }
     //Set the head to a temporary variable
@@ -66,6 +67,7 @@ void addFirst(List *list, const Data data)
     //link the first node to the new first node
     newNode->next = temp;
     newNode->next->previous = newNode;
+    assert(data == (*list)->data);
   }
   //Anropa createListNode for att skapa den nya noden
   //Glom inte att testa att den nya noden faktiskt kunde skapas/tilldelas minne innan du fortsatter
@@ -81,9 +83,10 @@ void addLast(List *list, const Data data)
   if (newNode != NULL)
   {
     //If the list is empty, replace head with node.
-    if (*list == NULL)
+    if (isEmpty(*list))
     {
       *list = newNode;
+      assert((*list)->data == data);
       return;
     }
     //Loop untill last node's next node is null => we are on the last node.
@@ -94,6 +97,7 @@ void addLast(List *list, const Data data)
     //link the last node with the new last node
     lastNode->next = newNode;
     newNode->previous = lastNode;
+    assert(getLastElement(*list) == data);
   }
 }
 
@@ -102,7 +106,7 @@ void addLast(List *list, const Data data)
   Noden ska lankas ur och minnet frigoras, resten av listan ska finnas kvar*/
 void removeFirst(List *list)
 {
-  assert(*list != NULL);
+  assert(!isEmpty(*list));
   //Glom inte att frigora minnet for den nod som lankas ur listan.
   //Tank pa att listans huvud efter bortlankningen maste peka pa den nod som nu ar forst.
 
@@ -129,7 +133,7 @@ void removeFirst(List *list)
   Precondition: listan ar inte tom (testa med assert)t*/
 void removeLast(List *list)
 {
-  assert(*list != NULL);
+  assert(!isEmpty(*list));
   //Glom inte att frigora minnet for den nod som lankas ur listan.
   //Tank pa att den nod som nu ar sist inte pekar nagonstans, dess pekare maste nollstallas
 
@@ -156,7 +160,7 @@ void removeLast(List *list)
 int removeElement(List *list, const Data data)
 {
   //If the list is empty, there is nothing to remove
-  if (*list == NULL)
+  if (isEmpty(*list))
   {
     return 0;
   }
@@ -229,7 +233,7 @@ int numberOfNodesInList(const List list)
   Postcondition: Listan ar tom, *list �r NULL (testa med assert)*/
 void clearList(List *list)
 {
-  if (*list == NULL)
+  if (isEmpty(*list))
   {
     return;
   }
@@ -240,7 +244,7 @@ void clearList(List *list)
   {
     free(*list);
     *list = NULL;
-    assert(*list == NULL);
+    assert(isEmpty(*list));
     return;
   }
   //loop thrugh the entire list starting at the second node and stopping at the last node.
@@ -256,7 +260,7 @@ void clearList(List *list)
   free(temp);
   *list = NULL;
 
-  assert((*list) == NULL);
+  assert(isEmpty(*list));
 }
 
 /*Skriv ut listan
@@ -279,7 +283,7 @@ void printList(const List list, FILE *textfile)
   Precondition: listan ar inte tom (testa med assert)*/
 Data getFirstElement(const List list)
 {
-  assert(list != NULL);
+  assert(!isEmpty(list));
   //return first element data
   return list->data;
 }
@@ -288,7 +292,7 @@ Data getFirstElement(const List list)
   Precondition: listan ar inte tom (testa med assert)*/
 Data getLastElement(const List list)
 {
-  assert(list != NULL);
+  assert(!isEmpty(list));
   //Loop untill last node
   struct node *lastNode;
   for (lastNode = list; lastNode->next != NULL; lastNode = lastNode->next)
