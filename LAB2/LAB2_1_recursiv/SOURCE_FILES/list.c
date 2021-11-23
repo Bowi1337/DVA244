@@ -132,22 +132,17 @@ void removeFirst(List *list)
 void removeLast(List *list)
 {
   assert(!isEmpty(*list));
-  //Glom inte att frigora minnet for den nod som lankas ur listan.
-  //Tank pa att den nod som nu ar sist inte pekar nagonstans, dess pekare maste nollstallas
 
-  //If there is only one node => remove it
   if ((*list)->next == NULL)
   {
     removeFirst(list);
     return;
   }
-  //Loop untill the node two nodes down is null => we are on the second last node.
   if ((*list)->next->next != NULL)
   {
     removeLast(&((*list)->next));
     return;
   }
-  //remove the second last next node
   free((*list)->next);
   (*list)->next = NULL;
 }
@@ -162,20 +157,16 @@ int removeElement(List *list, const Data data)
   {
     return 0;
   }
-
   if ((*list)->data != data && (*list)->next != NULL)
   {
     return removeElement(&((*list)->next), data);
   }
-
-  //If the node->data we landed on is not equal to data => we culd not find the node
+  //If the node->data we landed on is not equal to data => we could not find the node
   if ((*list)->data != data)
   {
-    //printList(*list, stdout);
     return 0;
   }
   struct node *nodeToRemove = (*list);
-
   //If it is not the first node link the previous node
   if (nodeToRemove->previous != NULL)
   {
@@ -185,7 +176,6 @@ int removeElement(List *list, const Data data)
   else
   {
     removeFirst(list);
-    //printList(*list, stdout);
     return 1;
   }
   //If it is not the last node, link the next node to the previous
@@ -196,7 +186,6 @@ int removeElement(List *list, const Data data)
   //After all the relinking is done, remove the node
   free((nodeToRemove));
   nodeToRemove = NULL;
-  //printList(*list, stdout);
   return 1; //Ersatt med ratt returvarde
 }
 

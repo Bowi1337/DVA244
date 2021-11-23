@@ -237,7 +237,6 @@ void clearList(List *list)
   {
     return;
   }
-  //Alla noder maste tas avallokeras en och en, det racker inte att endast frigora list.
 
   //If there is only one node => remove it
   if ((*list)->next == NULL)
