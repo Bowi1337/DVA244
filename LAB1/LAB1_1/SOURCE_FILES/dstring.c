@@ -14,7 +14,7 @@ DString dstring_initialize(const char *str)
 	   - Det �r tillatet att anv�nda inbyggda strangfunktioner (som t.ex strcpy())
 	   - Kom ihag att anvanda assert() */
 
-	DString temp = (DString)malloc(sizeof(DString) * (strlen(str) + 1));
+	char* temp = (char*)malloc(sizeof(char) * (strlen(str) + 1));
 	if (temp != NULL)
 	{
 		strcpy(temp, str);
@@ -49,7 +49,7 @@ int dstring_concatenate(DString *destination, DString source)
 		borjar jobba med minnet.
 		- Det ar tillatet att anvanda inbyggda funktioner (som t.ex. strcat()).
 	*/
-	DString temp = (DString)realloc(*destination, sizeof(DString) *(strlen(*destination) + strlen(source) + 1));
+	char* temp = (char*)realloc(*destination, sizeof(char) *(strlen(*destination) + strlen(source) + 1));
 	if(temp != NULL){
 		strcat(temp, source);
 		temp[strlen(temp)] = '\0';
@@ -79,7 +79,7 @@ void dstring_truncate(DString *destination, unsigned int truncatedLength)
 		- glom inte nolltermineringen
 		Vad h�nder om truncateLength �r l�ngre �n vad str�ngen �r?
 	*/
-	DString temp = (DString)realloc(*destination, sizeof(DString) * (truncatedLength + 1));
+	char* temp = (char*)realloc(*destination, sizeof(char) * (truncatedLength + 1));
 	if(temp != NULL){
 		temp[truncatedLength] = '\0';
 		*destination = temp;
