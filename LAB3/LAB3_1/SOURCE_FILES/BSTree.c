@@ -9,7 +9,6 @@
 /* Statiska hjalpfunktioner anvands av andra funktioner i tradet och ska inte ligga i interfacet (anvandaren behover inte kanna till dessa) */
 
 //Local functions
-void removeElementRecursiv(BSTree *tree, int data);
 int max(int a, int b);
 int smallestInTree(BSTree tree);
 int largestInTree(BSTree tree);
@@ -207,24 +206,24 @@ void removeElement(BSTree *tree, int data)
    {
       return;
    }
-   if (!find(*tree, data))
+   if ((*tree)->data > data)
    {
-      //printf("Node: %d does not exist\r\n", data);
-      return;
+      removeElement(&(*tree)->left, data);
    }
-
-   if ((*tree)->data == data)
+   else if ((*tree)->data < data)
+   {
+      removeElement(&(*tree)->right, data);
+   }
+   else
    {
       if ((*tree)->left != NULL && (*tree)->right != NULL)
       {
-         //printf("Removing root with 2 children\r\n");
          int nodeToRemove = smallestInTree((*tree)->right);
-         removeElementRecursiv(tree, nodeToRemove);
+         removeElement(tree, nodeToRemove);
          (*tree)->data = nodeToRemove;
       }
       else if ((*tree)->left != NULL)
       {
-         //printf("Removing root left\r\n");
          struct treeNode *nodeToRemove = (*tree);
          (*tree) = nodeToRemove->left;
          free(nodeToRemove);
@@ -232,7 +231,6 @@ void removeElement(BSTree *tree, int data)
       }
       else if ((*tree)->right != NULL)
       {
-         //printf("Removing root right\r\n");
          struct treeNode *nodeToRemove = (*tree);
          (*tree) = nodeToRemove->right;
          free(nodeToRemove);
@@ -240,93 +238,11 @@ void removeElement(BSTree *tree, int data)
       }
       else
       {
-         //printf("Removing root\r\n");
          free(*tree);
          *tree = NULL;
       }
-      return;
    }
-   removeElementRecursiv(tree, data);
-   assert(!find(*tree, data));
-}
-
-void removeElementRecursiv(BSTree *tree, int data)
-{
-   //printf("Removing: %d, currentNode: %d\r\n", data, (*tree)->data);
-   if (data < (*tree)->data)
-   {
-      if ((*tree)->left->data == data)
-      {
-         if ((*tree)->left->left != NULL && (*tree)->left->right != NULL)
-         {
-            //printf("Removing with 2 subNodes left\r\n");
-            int nodeToRemove = smallestInTree((*tree)->right);
-            removeElementRecursiv(tree, nodeToRemove);
-            (*tree)->left->data = nodeToRemove;
-         }
-         else if ((*tree)->left->left != NULL)
-         {
-            //printf("Removing left left\r\n");
-            struct treeNode *nodeToRemove = (*tree)->left;
-            (*tree)->left = nodeToRemove->left;
-            free(nodeToRemove);
-            nodeToRemove = NULL;
-         }
-         else if ((*tree)->left->right != NULL)
-         {
-            //printf("Removing left right\r\n");
-            struct treeNode *nodeToRemove = (*tree)->left;
-            (*tree)->left = nodeToRemove->right;
-            free(nodeToRemove);
-            nodeToRemove = NULL;
-         }
-         else
-         {
-            //printf("Removing left leaf\r\n");
-            free((*tree)->left);
-            (*tree)->left = NULL;
-         }
-         return;
-      }
-      return removeElementRecursiv(&(*tree)->left, data);
-   }
-   if (data > (*tree)->data)
-   {
-      if ((*tree)->right->data == data)
-      {
-         if ((*tree)->right->left != NULL && (*tree)->right->right != NULL)
-         {
-            //printf("Removing with 2 subNodes right\r\n");
-            int nodeToRemove = smallestInTree((*tree)->right);
-            removeElementRecursiv(tree, nodeToRemove);
-            (*tree)->right->data = nodeToRemove;
-         }
-         else if ((*tree)->right->left != NULL)
-         {
-            //printf("Removing right left\r\n");
-            struct treeNode *nodeToRemove = (*tree)->right;
-            (*tree)->right = nodeToRemove->left;
-            free(nodeToRemove);
-            nodeToRemove = NULL;
-         }
-         else if ((*tree)->right->right != NULL)
-         {
-            //printf("Removing right right\r\n");
-            struct treeNode *nodeToRemove = (*tree)->right;
-            (*tree)->right = nodeToRemove->right;
-            free(nodeToRemove);
-            nodeToRemove = NULL;
-         }
-         else
-         {
-            //printf("Removing left leaf\r\n");
-            free((*tree)->right);
-            (*tree)->right = NULL;
-         }
-         return;
-      }
-      return removeElementRecursiv(&(*tree)->right, data);
-   }
+   assert(!find(*tree, data));//This is running multiple times
 }
 
 int smallestInTree(BSTree tree)
@@ -426,6 +342,7 @@ void freeTree(BSTree *tree)
    }
    free(*tree);
    *tree = NULL;
+   assert(isEmpty(*tree));//This is running multiple times
 }
 
 int max(int a, int b)
