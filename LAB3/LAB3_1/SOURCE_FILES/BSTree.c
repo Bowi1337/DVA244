@@ -35,9 +35,6 @@ static struct treeNode *createNode(int data)
 /* Returnerar en dynamiskt allokerad array som innehaller tradets data sorterat */
 static int *writeSortedToArray(const BSTree tree)
 {
-   /* Skapa en dynamisk array men ratt storlek
-      Skriv datat fr�n tradet sorterat till arrayen (minsta till storsta)
-       - till detta kanske du behover en hjalpfunktion */
    int size = numberOfNodes(tree);
    int *array = (int *)malloc(sizeof(int) * size);
    if (array != NULL)
@@ -53,28 +50,20 @@ static int *writeSortedToArray(const BSTree tree)
 /* Bygger upp ett sorterat, balanserat trad fran en sorterad array */
 static void buildTreeSortedFromArray(BSTree *tree, const int arr[], int size)
 {
-   /* Bygg rekursivt fran mitten.
-       Mittenelementet i en delarray skapar rot i deltradet
-       Vanster delarray bygger vanster deltrad
-       Hoger delarray bygger hoger deltrad*/
    buildTree(tree, arr, size);
 }
 
 void buildTree(BSTree *tree, const int arr[], int size)
 {
    int half = floor(size / 2);
-   printf("%d, %d\n", half, size);
    *tree = createNode(arr[half]);
-   printf("Balancing node %d\n", arr[half]);
    if (size > 2)
    {
-
       buildTree(&(*tree)->left, arr, half);
       buildTree(&(*tree)->right, arr + half + 1, size - half - 1);
    }
    else if (size > 1)
    {
-      printf("Balancing node %d\n", arr[0]);
       (*tree)->left = createNode(arr[0]);
    }
 }
@@ -85,9 +74,7 @@ void populateArray(BSTree tree, int *array, int *count)
    {
       populateArray(tree->left, array, count);
    }
-   printf("Adding %d to array\n", tree->data);
-   array[*count] = tree->data;
-   *count = *count + 1;
+   array[(*count)++] = tree->data;
    if (tree->right != NULL)
    {
       populateArray(tree->right, array, count);
@@ -114,16 +101,11 @@ int isEmpty(const BSTree tree)
  Post-condition: data finns i tradet*/
 void insertSorted(BSTree *tree, int data)
 {
-   /*Tank pa att tradet kan vara tomt vid insattning
-      Du bestammer sjalv hur dubletter ska hanteras, ska de inte accepteras eller
-      ska de laggas till vanster/hoger?.
-      Post-condition kan verifieras med hjalp av find(...)*/
    if (*tree == NULL)
    {
       *tree = createNode(data);
       return;
    }
-   //printf("Inserting: %d, currentNode: %d\r\n", data, (*tree)->data);
    if (data > (*tree)->data)
    {
       if ((*tree)->right == NULL)
@@ -221,17 +203,13 @@ int find(const BSTree tree, int data)
 /* Tar bort 'data' fran tradet om det finns */
 void removeElement(BSTree *tree, int data)
 {
-   /* Inget data ska/kan tas bort fran ett tomt trad
-     Tre fall: Ett lov (inga barn), ett barn (vanster eller hoger), tva barn
-   
-     Glom inte att frigora noden nar den lankats ur tradet*/
    if (*tree == NULL)
    {
       return;
    }
    if (!find(*tree, data))
    {
-      printf("Node: %d does not exist\r\n", data);
+      //printf("Node: %d does not exist\r\n", data);
       return;
    }
 
@@ -239,14 +217,14 @@ void removeElement(BSTree *tree, int data)
    {
       if ((*tree)->left != NULL && (*tree)->right != NULL)
       {
-         printf("Removing root with 2 children\r\n");
+         //printf("Removing root with 2 children\r\n");
          int nodeToRemove = smallestInTree((*tree)->right);
          removeElementRecursiv(tree, nodeToRemove);
          (*tree)->data = nodeToRemove;
       }
       else if ((*tree)->left != NULL)
       {
-         printf("Removing root left\r\n");
+         //printf("Removing root left\r\n");
          struct treeNode *nodeToRemove = (*tree);
          (*tree) = nodeToRemove->left;
          free(nodeToRemove);
@@ -254,7 +232,7 @@ void removeElement(BSTree *tree, int data)
       }
       else if ((*tree)->right != NULL)
       {
-         printf("Removing root right\r\n");
+         //printf("Removing root right\r\n");
          struct treeNode *nodeToRemove = (*tree);
          (*tree) = nodeToRemove->right;
          free(nodeToRemove);
@@ -262,32 +240,33 @@ void removeElement(BSTree *tree, int data)
       }
       else
       {
-         printf("Removing root\r\n");
+         //printf("Removing root\r\n");
          free(*tree);
          *tree = NULL;
       }
       return;
    }
    removeElementRecursiv(tree, data);
+   assert(!find(*tree, data));
 }
 
 void removeElementRecursiv(BSTree *tree, int data)
 {
-   printf("Removing: %d, currentNode: %d\r\n", data, (*tree)->data);
+   //printf("Removing: %d, currentNode: %d\r\n", data, (*tree)->data);
    if (data < (*tree)->data)
    {
       if ((*tree)->left->data == data)
       {
          if ((*tree)->left->left != NULL && (*tree)->left->right != NULL)
          {
-            printf("Removing with 2 subNodes left\r\n");
+            //printf("Removing with 2 subNodes left\r\n");
             int nodeToRemove = smallestInTree((*tree)->right);
             removeElementRecursiv(tree, nodeToRemove);
             (*tree)->left->data = nodeToRemove;
          }
          else if ((*tree)->left->left != NULL)
          {
-            printf("Removing left left\r\n");
+            //printf("Removing left left\r\n");
             struct treeNode *nodeToRemove = (*tree)->left;
             (*tree)->left = nodeToRemove->left;
             free(nodeToRemove);
@@ -295,7 +274,7 @@ void removeElementRecursiv(BSTree *tree, int data)
          }
          else if ((*tree)->left->right != NULL)
          {
-            printf("Removing left right\r\n");
+            //printf("Removing left right\r\n");
             struct treeNode *nodeToRemove = (*tree)->left;
             (*tree)->left = nodeToRemove->right;
             free(nodeToRemove);
@@ -303,7 +282,7 @@ void removeElementRecursiv(BSTree *tree, int data)
          }
          else
          {
-            printf("Removing left leaf\r\n");
+            //printf("Removing left leaf\r\n");
             free((*tree)->left);
             (*tree)->left = NULL;
          }
@@ -317,14 +296,14 @@ void removeElementRecursiv(BSTree *tree, int data)
       {
          if ((*tree)->right->left != NULL && (*tree)->right->right != NULL)
          {
-            printf("Removing with 2 subNodes right\r\n");
+            //printf("Removing with 2 subNodes right\r\n");
             int nodeToRemove = smallestInTree((*tree)->right);
             removeElementRecursiv(tree, nodeToRemove);
             (*tree)->right->data = nodeToRemove;
          }
          else if ((*tree)->right->left != NULL)
          {
-            printf("Removing right left\r\n");
+            //printf("Removing right left\r\n");
             struct treeNode *nodeToRemove = (*tree)->right;
             (*tree)->right = nodeToRemove->left;
             free(nodeToRemove);
@@ -332,7 +311,7 @@ void removeElementRecursiv(BSTree *tree, int data)
          }
          else if ((*tree)->right->right != NULL)
          {
-            printf("Removing right right\r\n");
+            //printf("Removing right right\r\n");
             struct treeNode *nodeToRemove = (*tree)->right;
             (*tree)->right = nodeToRemove->right;
             free(nodeToRemove);
@@ -340,7 +319,7 @@ void removeElementRecursiv(BSTree *tree, int data)
          }
          else
          {
-            printf("Removing left leaf\r\n");
+            //printf("Removing left leaf\r\n");
             free((*tree)->right);
             (*tree)->right = NULL;
          }
@@ -348,7 +327,6 @@ void removeElementRecursiv(BSTree *tree, int data)
       }
       return removeElementRecursiv(&(*tree)->right, data);
    }
-   printf("Error\r\n");
 }
 
 int smallestInTree(BSTree tree)
@@ -439,6 +417,8 @@ void balanceTree(BSTree *tree)
    buildTreeSortedFromArray(tree, arr, size);
    free(arr);
    arr = NULL;
+   assert(size = numberOfNodes(*tree));
+   assert(minDepth(*tree) == depth(*tree));
 }
 
 /* Tom tradet och frigor minnet for de olika noderna */
