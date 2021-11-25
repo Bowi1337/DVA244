@@ -219,7 +219,7 @@ void removeElement(BSTree *tree, int data)
       if ((*tree)->left != NULL && (*tree)->right != NULL)
       {
          int nodeToRemove = smallestInTree((*tree)->right);
-         removeElement(tree, nodeToRemove);
+         removeElement(&(*tree)->right, nodeToRemove);
          (*tree)->data = nodeToRemove;
       }
       else if ((*tree)->left != NULL)
@@ -306,8 +306,7 @@ int depth(const BSTree tree)
    return max(leftMax, rightMax) + 1;
 }
 
-/* Returnerar minimidjupet for tradet
-   Se math.h for anvandbara funktioner*/
+/* Returnerar minimidjupet for tradet*/
 int minDepth(const BSTree tree)
 {
    return (int)ceil(log2(numberOfNodes(tree) + 1));
