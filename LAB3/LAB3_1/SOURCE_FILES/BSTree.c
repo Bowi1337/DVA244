@@ -400,15 +400,6 @@ int minDepth(const BSTree tree)
 /* Balansera tradet sa att depth(tree) == minDepth(tree) */
 void balanceTree(BSTree *tree)
 {
-   /* Forslag pa algoritm:
-	   - overfor tradet till en dynamiskt allokerad array med writeSortedToArray()
-	   - tom tradet med freeTree()
-	   - bygg upp tradet rekursivt fran arrayen med buildTreeSortedFromArray()
-	   - frigor minne for den dynamiskt allokerade arrayen
-
-	   Post-conditions:
-	   - tree har lika manga noder som tidigare
-	   - djupet for tradet ar samma som minimumdjupet for tradet */
    if (*tree == NULL)
       return;
    int size = numberOfNodes(*tree);
