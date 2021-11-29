@@ -5,7 +5,7 @@
 #include "BSTree.h"
 
 //Local functions
-int max(int a, int b);
+int intintmax(int a, int b);
 int smallestInTree(const BSTree tree);
 int largestInTree(const BSTree tree);
 void populateArray(BSTree tree, int *array, int *count);
@@ -323,7 +323,7 @@ int depth(const BSTree tree)
       return 0;
    }
    //Traverse the entire tree, returning only the max depth of the right or the left side.
-   return  max(depth(tree->left), depth(tree->right)) + 1;
+   return  intmax(depth(tree->left), depth(tree->right)) + 1;
 }
 
 /*Returns the least possible depth for the tree. */
@@ -381,7 +381,7 @@ void freeTree(BSTree *tree)
 }
 
 //Returns the grater value. 
-int max(int a, int b)
+int intmax(int a, int b)
 {
    if (a > b)
       return a;
