@@ -4,12 +4,12 @@
 #include <math.h>
 #include "BSTree.h"
 
-
 //Local functions
 int max(int a, int b);
-int smallestInTree(BSTree tree);
-int largestInTree(BSTree tree);
+int smallestInTree(const BSTree tree);
+int largestInTree(const BSTree tree);
 void populateArray(BSTree tree, int *array, int *count);
+int isBalanced(const BSTree tree);
 
 /* Creatign a treeNode with the given data by allocating memmory for the node. */
 static struct treeNode *createNode(int data)
@@ -100,9 +100,7 @@ BSTree emptyTree(void)
 /*Checks if tree is empty. Returns 1 if empty otherwise 0. */
 int isEmpty(const BSTree tree)
 {
-   if (tree == NULL)
-      return 1;
-   return 0;
+   return (tree == NULL);
 }
 
 /*Inserts node into tree and makes sure the tree stays sorted. */
@@ -151,7 +149,7 @@ void insertSorted(BSTree *tree, int data)
          insertSorted(&((*tree)->left), data);
       }
    }
-   //assert that the node as been inserted. 
+   //assert that the node as been inserted.
    assert(find(*tree, data));
 }
 
@@ -201,10 +199,12 @@ void printPostorder(const BSTree tree, FILE *textfile)
 int find(const BSTree tree, int data)
 {
    //If the tree is empty, the node does not exist
-   if (isNull(tree))
+   if (isEmpty(tree))
+   {
       return 0;
+   }
 
-   //we found a node with matching data. 
+   //we found a node with matching data.
    if (tree->data == data)
       return 1;
 
@@ -223,31 +223,31 @@ int find(const BSTree tree, int data)
 /*Removes a node with matching data from the tree. */
 void removeElement(BSTree *tree, int data)
 {
-   //If the tree is empty, there is nothing to remove. 
-   if (isNull(*tree))
+   //If the tree is empty, there is nothing to remove.
+   if (isEmpty(*tree))
    {
       return;
    }
 
-   //If the provided data is less than current nodes data, do recursiv step left. 
+   //If the provided data is less than current nodes data, do recursiv step left.
    if ((*tree)->data > data)
    {
       removeElement(&(*tree)->left, data);
    }
-   //If the provided data is grater than current nodes data, do recursiv step right. 
+   //If the provided data is grater than current nodes data, do recursiv step right.
    else if ((*tree)->data < data)
    {
       removeElement(&(*tree)->right, data);
    }
-   //We found the node to remove. 
+   //We found the node to remove.
    else
    {
-      //if the node has 2 children, the order of these if statments are important. 
+      //if the node has 2 children, the order of these if statments are important.
       if ((*tree)->left != NULL && (*tree)->right != NULL)
       {
-         //get the smallest value to the right of this ndoe. 
+         //get the smallest value to the right of this ndoe.
          int nodeToRemove = smallestInTree((*tree)->right);
-         //then remove that node. 
+         //then remove that node.
          removeElement(&(*tree)->right, nodeToRemove);
          //Set the current node data to the removed nodes data
          (*tree)->data = nodeToRemove;
@@ -255,7 +255,7 @@ void removeElement(BSTree *tree, int data)
       //If the node has one child to the left
       else if ((*tree)->left != NULL)
       {
-         //Crete a new pointer for the note to be removed. 
+         //Crete a new pointer for the note to be removed.
          struct treeNode *nodeToRemove = *tree;
          //set the current node to left node
          *tree = nodeToRemove->left;
@@ -266,7 +266,7 @@ void removeElement(BSTree *tree, int data)
       //If the node has one child to the right
       else if ((*tree)->right != NULL)
       {
-         //Crete a new pointer for the note to be removed. 
+         //Crete a new pointer for the note to be removed.
          struct treeNode *nodeToRemove = *tree;
          //set the current node to right node
          (*tree) = nodeToRemove->right;
@@ -274,7 +274,7 @@ void removeElement(BSTree *tree, int data)
          free(nodeToRemove);
          nodeToRemove = NULL;
       }
-      //The node to remove is a leaf. 
+      //The node to remove is a leaf.
       else
       {
          //Remove the node
@@ -286,97 +286,86 @@ void removeElement(BSTree *tree, int data)
 }
 
 //Finds the node with the smallest data in the tree
-int smallestInTree(BSTree tree)
+int smallestInTree(const BSTree tree)
 {
    if (tree->left == NULL)
    {
       return tree->data;
    }
-   else
-   {
-      return smallestInTree(tree->left);
-   }
+   return smallestInTree(tree->left);
 }
 //Finds the node with the gratest data in the tree
-int largestInTree(BSTree tree)
+int largestInTree(const BSTree tree)
 {
    if (tree->right == NULL)
    {
       return tree->data;
    }
-   else
-   {
-      return largestInTree(tree->right);
-   }
+   return largestInTree(tree->right);
 }
 
-/*Return how many nodes are in the tree. */
+/*Returns how many nodes are in the tree. */
 int numberOfNodes(const BSTree tree)
 {
-   //If the tree is empty, there are no nodes in the tree. 
-   if (isNull(tree))
+   //If the tree is empty, there are no nodes in the tree.
+   if (isEmpty(tree))
       return 0;
-   
-   return 1 + numberOfNodes(tree->left) + numberOfNodes(tree->left);
-
-   /*
-   int count = 1;
-   if (tree->left != NULL)
-   {
-      count += numberOfNodes(tree->left);
-   }
-   if (tree->right != NULL)
-   {
-      count += numberOfNodes(tree->right);
-   }
-   return count;*/
+   //Traverse the entire tree adding +1 at every node
+   return 1 + numberOfNodes(tree->left) + numberOfNodes(tree->right);
 }
 
-/* Returnerar hur djupt tradet ar */
+/*Returns how deep the tree is*/
 int depth(const BSTree tree)
 {
-   if (isNull(tree))
+   //If the tree is empty, the depth is 0.
+   if (isEmpty(tree))
    {
       return 0;
    }
-   int leftMax = 0;
-   int rightMax = 0;
-   if (tree->left != NULL)
-   {
-      leftMax = depth(tree->left);
-   }
-   if (tree->right != NULL)
-   {
-      rightMax = depth(tree->right);
-   }
-   return max(leftMax, rightMax) + 1;
+   //Traverse the entire tree, returning only the max depth of the right or the left side.
+   return  max(depth(tree->left), depth(tree->right)) + 1;
 }
 
-/* Returnerar minimidjupet for tradet*/
+/*Returns the least possible depth for the tree. */
 int minDepth(const BSTree tree)
 {
    return (int)ceil(log2(numberOfNodes(tree) + 1));
 }
 
-/* Balansera tradet sa att depth(tree) == minDepth(tree) */
+/*Balances a tree. */
 void balanceTree(BSTree *tree)
 {
-   if (isNull(*tree))
+   //If the tree is empty, don't balance it. 
+   if (isEmpty(*tree))
       return;
+   //If the tree is alread balanced, don't do it again. 
+   if (isBalanced(*tree))
+      return;
+   //Count the number of nodes in the tree. 
    int size = numberOfNodes(*tree);
+   //Write the tree to a sorted array. 
    int *arr = writeSortedToArray(*tree);
+   //Free the tree. 
    freeTree(tree);
+   //Build a tree from the serted array. 
    buildTreeSortedFromArray(tree, arr, size);
+   //Free the array
    free(arr);
    arr = NULL;
+
    assert(size = numberOfNodes(*tree));
-   assert(minDepth(*tree) == depth(*tree));
+   assert(isBalanced(*tree));
 }
 
-/* Tom tradet och frigor minnet for de olika noderna */
+int isBalanced(const BSTree tree)
+{
+   return (depth(tree) == minDepth(tree));
+}
+
+/*Remove the entire tree.*/
 void freeTree(BSTree *tree)
 {
-   // Post-condition: tradet ar tomt
+   //Traverse the entire tree
    if ((*tree)->left != NULL)
    {
       freeTree(&(*tree)->left);
@@ -385,11 +374,13 @@ void freeTree(BSTree *tree)
    {
       freeTree(&(*tree)->right);
    }
+   //Remove the node once we are on a leaf. 
    free(*tree);
    *tree = NULL;
-   assert(isEmpty(*tree)); //This is running multiple times
+   assert(isEmpty(*tree));
 }
 
+//Returns the grater value. 
 int max(int a, int b)
 {
    if (a > b)

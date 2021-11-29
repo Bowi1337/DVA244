@@ -42,7 +42,6 @@ void testTree(BSTree tree)
     {
         assert(find(tree, arr[i]));
     }
-
     assert(numberOfNodes(tree) == 7);
     assert(depth(tree) == 4);    // Om vi satter in noderna i denna ordning blir djupet 4
     assert(minDepth(tree) == 3); // Med 7 noder ar minimidjupet 3
