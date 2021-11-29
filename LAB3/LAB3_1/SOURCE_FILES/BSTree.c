@@ -4,22 +4,19 @@
 #include <math.h>
 #include "BSTree.h"
 
-/*Det �r helt till�tet att l�gga till egna hj�lpfunktioner men de befintliga funktionerna f�r inte �ndras*/
-
-/* Statiska hjalpfunktioner anvands av andra funktioner i tradet och ska inte ligga i interfacet (anvandaren behover inte kanna till dessa) */
 
 //Local functions
 int max(int a, int b);
 int smallestInTree(BSTree tree);
 int largestInTree(BSTree tree);
-void buildTree(BSTree *tree, const int arr[], int size);
 void populateArray(BSTree tree, int *array, int *count);
 
-/* Skapar en tradnod med det givna datat genom att allokera minne for noden. Glom inte att initiera pekarna*/
+/* Creatign a treeNode with the given data by allocating memmory for the node. */
 static struct treeNode *createNode(int data)
 {
-   // Glom inte att testa sa att allokeringen lyckades
+   //Allocating memmory for treeNode
    struct treeNode *newNode = (struct treeNode *)malloc(sizeof(struct treeNode));
+   //Testing allocation
    if (newNode != NULL)
    {
       newNode->data = data;
@@ -27,68 +24,80 @@ static struct treeNode *createNode(int data)
       newNode->right = NULL;
       return newNode;
    }
+   //If allocation fails we can no longer continue. Exiting with error code 1.
    printf("%s", "Memmory allocaton failed. ");
-   return NULL;
+   exit(1);
 }
 
-/* Returnerar en dynamiskt allokerad array som innehaller tradets data sorterat */
+/* Create a dynamicly allocated array containing the data of the tree sorted in ascending order. */
 static int *writeSortedToArray(const BSTree tree)
 {
+   //Count the number of nodes to decide the size of the array.
    int size = numberOfNodes(tree);
+
+   //Allocate memmory for the array.
    int *array = (int *)malloc(sizeof(int) * size);
+   //Testing allocation
    if (array != NULL)
    {
+      //Use helper function to populate the array recursivly.
       int i = 0;
       populateArray(tree, array, &i);
       return array;
    }
+   //If allocation fails we can no longer continue. Exiting with error code 2.
    printf("%s", "Memmory allocaton failed. ");
-   return NULL;
+   exit(2);
 }
 
-/* Bygger upp ett sorterat, balanserat trad fran en sorterad array */
-static void buildTreeSortedFromArray(BSTree *tree, const int arr[], int size)
-{
-   buildTree(tree, arr, size);
-}
-
-void buildTree(BSTree *tree, const int arr[], int size)
-{
-   int half = floor(size / 2);
-   *tree = createNode(arr[half]);
-   if (size > 2)
-   {
-      buildTree(&(*tree)->left, arr, half);
-      buildTree(&(*tree)->right, arr + half + 1, size - half - 1);
-   }
-   else if (size > 1)
-   {
-      (*tree)->left = createNode(arr[0]);
-   }
-}
-
+/*Recursivly popluate an array with data from the tree sorted in ascending order. Using same principle as "print in order". */
 void populateArray(BSTree tree, int *array, int *count)
 {
+   //Traverse left
    if (tree->left != NULL)
    {
       populateArray(tree->left, array, count);
    }
+   //Add node data to array
    array[(*count)++] = tree->data;
+
+   //Traverse right
    if (tree->right != NULL)
    {
       populateArray(tree->right, array, count);
    }
 }
 
-/* Implementation av tradet, funktionerna i interfacet */
+/*Buil a sorted and balanced tree from a sorted array (ascending)*/
+static void buildTreeSortedFromArray(BSTree *tree, const int arr[], int size)
+{
+   //Half the size rounded down.
+   int half = floor(size / 2);
 
-/* Skapar ett tomt trad - denna funktion ar fardig */
+   //Create a new node with the data from the middle of the array.
+   *tree = createNode(arr[half]);
+
+   //If we have more that 2 nodes in the sub-array we can do another recursiv step. (at least one in each)
+   if (size > 2)
+   {
+      buildTreeSortedFromArray(&(*tree)->left, arr, half);
+      buildTreeSortedFromArray(&(*tree)->right, arr + half + 1, size - half - 1);
+   }
+   //if we had precisly 2 nodes in this sub-array. We can add the remaning one to the left.
+   //The remaning one will allways be smaller. (2/2 = 1, arr[0] < arr[1])
+   else if (size == 2)
+   {
+      (*tree)->left = createNode(arr[0]);
+   }
+}
+
+/*Creates a empty tree. */
 BSTree emptyTree(void)
 {
    return NULL;
 }
 
-/* Returnerar 1 ifall tradet ar tomt, 0 annars */
+/*Checks if tree is empty. Returns 1 if empty otherwise 0. */
 int isEmpty(const BSTree tree)
 {
    if (tree == NULL)
@@ -96,17 +105,20 @@ int isEmpty(const BSTree tree)
    return 0;
 }
 
-/* Satter in 'data' sorterat i *tree
- Post-condition: data finns i tradet*/
+/*Inserts node into tree and makes sure the tree stays sorted. */
 void insertSorted(BSTree *tree, int data)
 {
-   if (*tree == NULL)
+   //If the tree is empty, create root.
+   if (isEmpty(*tree))
    {
       *tree = createNode(data);
       return;
    }
+
+   //if the data is grater than the current data, test right node
    if (data > (*tree)->data)
    {
+      //If the right node is empty, allocate node to right node.
       if ((*tree)->right == NULL)
       {
          struct treeNode *newNode = createNode(data);
@@ -115,13 +127,16 @@ void insertSorted(BSTree *tree, int data)
             (*tree)->right = newNode;
          }
       }
+      //otherwise do recursiv step to the right.
       else
       {
          return insertSorted(&((*tree)->right), data);
       }
    }
+   //if the data is less than the current data, test left node
    else if (data < (*tree)->data)
    {
+      //If the left node is empty, allocate node to left node.
       if ((*tree)->left == NULL)
       {
          struct treeNode *newNode = createNode(data);
@@ -132,15 +147,15 @@ void insertSorted(BSTree *tree, int data)
       }
       else
       {
+         //otherwise do recursiv step to the left.
          insertSorted(&((*tree)->left), data);
       }
    }
+   //assert that the node as been inserted. 
    assert(find(*tree, data));
 }
 
-/* Utskriftsfunktioner
-   Vid anrop: anvand stdio som andra argument for att skriva ut p� skarmen
-   Det racker att ni implementerar LR ordningarna*/
+/*Prints tree in preorder. */
 void printPreorder(const BSTree tree, FILE *textfile)
 {
    fprintf(textfile, "%d\n", tree->data);
@@ -154,6 +169,7 @@ void printPreorder(const BSTree tree, FILE *textfile)
    }
 }
 
+/*Prints tree in inorder. */
 void printInorder(const BSTree tree, FILE *textfile)
 {
    if (tree->left != NULL)
@@ -167,6 +183,7 @@ void printInorder(const BSTree tree, FILE *textfile)
    }
 }
 
+/*Prints tree in postorder. */
 void printPostorder(const BSTree tree, FILE *textfile)
 {
    if (tree->left != NULL)
@@ -180,71 +197,95 @@ void printPostorder(const BSTree tree, FILE *textfile)
    fprintf(textfile, "%d\n", tree->data);
 }
 
-/* Returnerar 1 om 'data' finns i tree, 0 annars */
+/*Checks if a node with specified data exists. */
 int find(const BSTree tree, int data)
 {
-   if (tree == NULL)
+   //If the tree is empty, the node does not exist
+   if (isNull(tree))
       return 0;
 
+   //we found a node with matching data. 
    if (tree->data == data)
       return 1;
 
+   //if the data is less than current nodes data, do recursiv step to the left
    if (data < tree->data)
    {
       return find(tree->left, data);
    }
+   //if the data is grater than current nodes data, do recursiv step to the right
    else
    {
       return find(tree->right, data);
    }
 }
 
-/* Tar bort 'data' fran tradet om det finns */
+/*Removes a node with matching data from the tree. */
 void removeElement(BSTree *tree, int data)
 {
-   if (*tree == NULL)
+   //If the tree is empty, there is nothing to remove. 
+   if (isNull(*tree))
    {
       return;
    }
+
+   //If the provided data is less than current nodes data, do recursiv step left. 
    if ((*tree)->data > data)
    {
       removeElement(&(*tree)->left, data);
    }
+   //If the provided data is grater than current nodes data, do recursiv step right. 
    else if ((*tree)->data < data)
    {
       removeElement(&(*tree)->right, data);
    }
+   //We found the node to remove. 
    else
    {
+      //if the node has 2 children, the order of these if statments are important. 
       if ((*tree)->left != NULL && (*tree)->right != NULL)
       {
+         //get the smallest value to the right of this ndoe. 
          int nodeToRemove = smallestInTree((*tree)->right);
+         //then remove that node. 
          removeElement(&(*tree)->right, nodeToRemove);
+         //Set the current node data to the removed nodes data
          (*tree)->data = nodeToRemove;
       }
+      //If the node has one child to the left
       else if ((*tree)->left != NULL)
       {
-         struct treeNode *nodeToRemove = (*tree);
-         (*tree) = nodeToRemove->left;
+         //Crete a new pointer for the note to be removed. 
+         struct treeNode *nodeToRemove = *tree;
+         //set the current node to left node
+         *tree = nodeToRemove->left;
+         //Remove the node
          free(nodeToRemove);
          nodeToRemove = NULL;
       }
+      //If the node has one child to the right
       else if ((*tree)->right != NULL)
       {
-         struct treeNode *nodeToRemove = (*tree);
+         //Crete a new pointer for the note to be removed. 
+         struct treeNode *nodeToRemove = *tree;
+         //set the current node to right node
          (*tree) = nodeToRemove->right;
+         //Remove the node
          free(nodeToRemove);
          nodeToRemove = NULL;
       }
+      //The node to remove is a leaf. 
       else
       {
+         //Remove the node
          free(*tree);
          *tree = NULL;
       }
    }
-   assert(!find(*tree, data));//This is running multiple times
+   assert(!find(*tree, data)); //This is running multiple times
 }
 
+//Finds the node with the smallest data in the tree
 int smallestInTree(BSTree tree)
 {
    if (tree->left == NULL)
@@ -256,7 +297,7 @@ int smallestInTree(BSTree tree)
       return smallestInTree(tree->left);
    }
 }
-
+//Finds the node with the gratest data in the tree
 int largestInTree(BSTree tree)
 {
    if (tree->right == NULL)
@@ -269,11 +310,16 @@ int largestInTree(BSTree tree)
    }
 }
 
-/* Returnerar hur manga noder som totalt finns i tradet */
+/*Return how many nodes are in the tree. */
 int numberOfNodes(const BSTree tree)
 {
-   if (tree == NULL)
+   //If the tree is empty, there are no nodes in the tree. 
+   if (isNull(tree))
       return 0;
+   
+   return 1 + numberOfNodes(tree->left) + numberOfNodes(tree->left);
+
+   /*
    int count = 1;
    if (tree->left != NULL)
    {
@@ -283,13 +329,13 @@ int numberOfNodes(const BSTree tree)
    {
       count += numberOfNodes(tree->right);
    }
-   return count;
+   return count;*/
 }
 
 /* Returnerar hur djupt tradet ar */
 int depth(const BSTree tree)
 {
-   if (tree == NULL)
+   if (isNull(tree))
    {
       return 0;
    }
@@ -315,7 +361,7 @@ int minDepth(const BSTree tree)
 /* Balansera tradet sa att depth(tree) == minDepth(tree) */
 void balanceTree(BSTree *tree)
 {
-   if (*tree == NULL)
+   if (isNull(*tree))
       return;
    int size = numberOfNodes(*tree);
    int *arr = writeSortedToArray(*tree);
@@ -341,7 +387,7 @@ void freeTree(BSTree *tree)
    }
    free(*tree);
    *tree = NULL;
-   assert(isEmpty(*tree));//This is running multiple times
+   assert(isEmpty(*tree)); //This is running multiple times
 }
 
 int max(int a, int b)
