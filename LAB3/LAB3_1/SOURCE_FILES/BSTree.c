@@ -5,7 +5,7 @@
 #include "BSTree.h"
 
 //Local functions
-int intintmax(int a, int b);
+int intmax(int a, int b);
 int smallestInTree(const BSTree tree);
 int largestInTree(const BSTree tree);
 void populateArray(BSTree tree, int *array, int *count);
