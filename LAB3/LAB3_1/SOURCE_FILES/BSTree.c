@@ -156,14 +156,14 @@ void insertSorted(BSTree *tree, int data)
 /*Prints tree in preorder. */
 void printPreorder(const BSTree tree, FILE *textfile)
 {
-   fprintf(textfile, "%d\n", tree->data);
+   fprintf(textfile, "%d ", tree->data);
    if (tree->left != NULL)
    {
-      printInorder(tree->left, textfile);
+      printPreorder(tree->left, textfile);
    }
    if (tree->right != NULL)
    {
-      printInorder(tree->right, textfile);
+      printPreorder(tree->right, textfile);
    }
 }
 
@@ -174,7 +174,7 @@ void printInorder(const BSTree tree, FILE *textfile)
    {
       printInorder(tree->left, textfile);
    }
-   fprintf(textfile, "%d\n", tree->data);
+   fprintf(textfile, "%d ", tree->data);
    if (tree->right != NULL)
    {
       printInorder(tree->right, textfile);
@@ -186,13 +186,13 @@ void printPostorder(const BSTree tree, FILE *textfile)
 {
    if (tree->left != NULL)
    {
-      printInorder(tree->left, textfile);
+      printPostorder(tree->left, textfile);
    }
    if (tree->right != NULL)
    {
-      printInorder(tree->right, textfile);
+      printPostorder(tree->right, textfile);
    }
-   fprintf(textfile, "%d\n", tree->data);
+   fprintf(textfile, "%d ", tree->data);
 }
 
 /*Checks if a node with specified data exists. */
