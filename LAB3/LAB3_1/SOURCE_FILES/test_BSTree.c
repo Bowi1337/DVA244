@@ -1,16 +1,13 @@
 #include <assert.h>
 #include "BSTree.h"
 #include <stdio.h>
-
-/*Funktion for att testa ditt trad.
-  OBS! Preorder, Inorder och Postorder
-       maste testas manuellt via menyn*/
+    /*Funktion for att testa ditt trad.
+OBS! Preorder, Inorder och Postorder
+maste testas manuellt via menyn*/
 void testTree(BSTree tree);
-
 /*Meny som kan anvandas for att testa enstaka funktioner
-  Ni far givetvis skriva en egen meny om ni vill*/
+Ni far givetvis skriva en egen meny om ni vill*/
 void menuTree(BSTree tree);
-
 int main(void)
 {
     BSTree tree = emptyTree();
@@ -20,36 +17,38 @@ int main(void)
 
     return 0;
 }
-
 void testTree(BSTree tree)
 {
     printf("Starting test\n");
 
-    //Tradet ska vara tomt fr�n borjan
+    //Tradet ska vara tomt frn borjan
     assert(isEmpty(tree));
-    //Tester p� tomt tr�d
-    assert(!find(tree, 7));  //leta i tomt tr�d
-    removeElement(&tree, 7); //ta bort fr�n tomt tr�d - programmet ska inte krasha
-    balanceTree(&tree);      //balansera ett tomt tr�d - programmet ska inte krasha
+    //Tester p tomt trd
+    assert(!find(tree, 7));  //leta i tomt trd
+    removeElement(&tree, 7); //ta bort frn tomt trd - programmet ska inte krasha
+    assert(depth(tree) == 0 && minDepth(tree) == 0);
+    balanceTree(&tree); //balansera ett tomt trd - programmet ska inte krasha
+
     // Satt in 7 element i tradet
     int arr[7] = {5, 10, 1, 3, 7, 19, 16}, i;
     for (i = 0; i < 7; i++)
     {
         insertSorted(&tree, arr[i]);
     }
+
     // Verifiera att alla element finns i tradet
     for (i = 0; i < 7; i++)
     {
         assert(find(tree, arr[i]));
     }
+
     assert(numberOfNodes(tree) == 7);
-    assert(depth(tree) == 4);    // Om vi satter in noderna i denna ordning blir djupet 4
+    assert(depth(tree) == 4);             // Om vi satter in noderna i denna ordning blirdjupet 4 
     assert(minDepth(tree) == 3); // Med 7 noder ar minimidjupet 3
 
-    removeElement(&tree, 7);  //Ta bort ett lov
-    removeElement(&tree, 19); // Tar bort ett element med ett barn
-    removeElement(&tree, 5);  // Tar bort ett element med tva barn
-
+    removeElement(&tree, 7);          //Ta bort ett lov
+    removeElement(&tree, 19);         // Tar bort ett element med ett barn
+    removeElement(&tree, 5);          // Tar bort ett element med tva barn
     assert(numberOfNodes(tree) == 4); // Tre noder har blivit borttagna
     // Verifiera att talen blivit borttagna
     assert(!find(tree, 7));
@@ -70,27 +69,66 @@ void testTree(BSTree tree)
 
     // Addera 9 element sa att tradet blir obalanserat
     for (i = 0; i < 9; i++)
-    {
         insertSorted(&tree, i + 20);
-    }
+
     assert(numberOfNodes(tree) == 10);
 
     //Verifiera att tradet ar obalanserat
     assert(depth(tree) != minDepth(tree));
 
     balanceTree(&tree);
-    assert(numberOfNodes(tree) == 10);     // Verifiera att antalet noder ar detsamma
+    assert(numberOfNodes(tree) == 10); // Verifiera att antalet noder ar detsamma
     assert(depth(tree) == minDepth(tree)); // Verifiera att tradet ar balanserat
-    // Tom tradet och kontrollera att det ar tomt
 
+    // Tom tradet och kontrollera att det ar tomt
     freeTree(&tree);
     assert(isEmpty(tree));
     assert(numberOfNodes(tree) == 0);
     assert(depth(tree) == 0);
 
-    printf("Congratulations, your program passet the test\n");
-}
+    //Ta bort nod med tv barn
+    int arr2[14] = {3, 2, 1, 9, 5, 4, 7, 6, 8, 15, 13, 11, 14, 18};
+    i = 0;
+    for (int i = 0; i < 14; i++)
+    {
+        insertSorted(&tree, arr2[i]);
+    }
+    removeElement(&tree, 9);
 
+    /*Avkommentera rad 106-116 om du vid borttagning av nod med tv barn 
+vljer det minsta i hger deltrd som ersttare (11 erstter d 9 i det hr testet), jmfr
+dina utskrifter av trdet med de utskrifter som visar hur trdet br se ut. Om du 
+behver kan du justera mellanslagen i utskrifterna s att formateringen ser bra 
+ut i din konsoll. */
+    
+printf("\nPreorder\nYour tree:    ");
+printPreorder(tree, stdout);
+printf("\nCorrect tree: 3 2 1 11 5 4 7 6 8 15 13 14 18");
+printf("\nInorder\nYour tree:    ");
+printInorder(tree, stdout);
+printf("\nCorrect tree: 1 2 3 4 5 6 7 8 11 13 14 15 18");
+printf("\nPostorder\nYour tree:    ");
+printPostorder(tree, stdout);
+printf("\nCorrect tree: 1 2 4 6 8 7 5 14 13 18 15 11 3");
+
+    /*Avkommentera rad 120-130 om du vid borttagning av nod med tv barn 
+vljer det strsta i vnster deltrd som ersttare (8 erstter d 9 i det hr testet), jmfr 
+dina utskrifter av trdet med de utskrifter som visar hur trdet br se ut. Om du 
+behver kan du justera mellanslagen i utskrifterna s att formateringen ser bra 
+ut i din konsoll. */
+    /*
+   printf("\nPreorder\nYour tree:    ");
+   printPreorder(tree, stdout);
+   printf("\nCorrect tree: 3 2 1 8 5 4 7 6 15 13 11 14 18");
+   printf("\nInorder\nYour tree:    ");
+   printInorder(tree, stdout);
+   printf("\nCorrect tree: 1 2 3 4 5 6 7 8 11 13 14 15 18");
+   printf("\nPostorder\nYour tree:    ");
+   printPostorder(tree, stdout);
+   printf("\nCorrect tree: 1 2 4 6 7 5 11 14 13 18 15 8 3");
+   */
+    printf("\n\nCongratulations, your program passet the test\n");
+}
 void menuTree(BSTree tree)
 {
     int choice, data;
