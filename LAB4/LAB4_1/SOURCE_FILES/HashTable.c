@@ -29,7 +29,7 @@ static int linearProbe(const HashTable* htable, Key key, unsigned int *col)
         (*col)++;
         if(*col > getSize(htable)){
             printf("Hash table is full!\n");
-            printHashTable(htable);
+            //printHashTable(htable);
             return -1;
         }
     }
