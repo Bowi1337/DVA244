@@ -10,6 +10,8 @@
         "unordered_map": "c",
         "vector": "c",
         "initializer_list": "c",
-        "valarray": "c"
+        "valarray": "c",
+        "random": "cpp",
+        "*.tcc": "cpp"
     }
 }

@@ -160,6 +160,7 @@ int partition(ElementType *A, int low, int high, Statistics *statistics)
 		for(i = low; lessThan(A[i], p, statistics); i++);
 
 		for(j = high; greaterThan(A[j], p, statistics); j--);
+		
 		if(greaterThanOrEqualTo(i, j, statistics)){
 			return j;
 		}

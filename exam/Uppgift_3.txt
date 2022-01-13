@@ -1,0 +1,112 @@
+Examination
+Uppgift 3
+
+static struct treeNode *createNode(int data)
+Komplexitet O(1)
+Det tar alltid lika lång tid att köra funktionen efter som det inte finns några
+loopar. 
+
+
+static int *writeSortedToArray(const BSTree tree)
+Funktionen har en hjälpfunktion populateArray som skriver alla trädets noder
+till en array. 
+
+hjälpfunktionen har komplexiteten O(n) efter som vi besöker alla noder i trädet
+en gång. 
+
+writeSortedToArray har för sig själv komplexiteten O(1) men efter som vi vet
+vad hjälpfunktionen gör så har den komplexiteten O(n)
+
+
+static void buildTreeSortedFromArray(BSTree *tree, const int arr[], int size)
+Samma som föregående hjälpfunktion där vi besöker varje nod exakt en gång.
+Komplexitet O(n)
+
+
+BSTree emptyTree(void)
+Endast en rad kod som gör samma sak varje gång. Komplexitet O(1)
+
+
+int isEmpty(const BSTree tree)
+Endast en rad kod som gör samma sak varje gång. Komplexitet O(1)
+
+
+void insertSorted(BSTree *tree, int data)
+
+Komplexitet:
+    Bästa fall:  O(log(n))
+    Värsta fall: O(n)
+
+Om trädet är balancerat så har trädet djupet ca log(n) alltså så behöver vi
+bara besöka ca log(n) noder.
+
+Om trädet ser ut som en länkad lista och vi vill lägga till i slutet på den så
+blir komplexiteten o(n)
+
+
+printPre/In/Post-order
+Vi måste besöka alla noder en gång. Koplexitet O(n)
+
+
+int find(const BSTree tree, int data)
+Samma som för insert sorted. 
+
+Komplexitet:
+    Bästa fall:  O(log(n))
+    Värsta fall: O(n)
+
+Om trädet är balancerat så har trädet djupet ca log(n) alltså så behöver vi
+bara besöka ca log(n) noder.
+
+Om trädet ser ut som en länkad lista och vi vill hitta det som är i slutet på den så
+blir komplexiteten o(n)
+
+void removeElement(BSTree *tree, int data)
+Samma som insert sorted.
+
+
+Komplexitet:
+    Bästa fall:  O(log(n))
+    Värsta fall: O(n)
+
+Om trädet är balancerat så har trädet djupet ca log(n) alltså så behöver vi
+bara besöka ca log(n) noder.
+
+Om trädet ser ut som en länkad lista och vi vill ta bort i slutet på den så
+blir komplexiteten o(n)
+
+
+int numberOfNodes(const BSTree tree)
+Vi måste besöka alla noder en gång. Koplexitet O(n)
+
+
+int depth(const BSTree tree)
+Vi måste besöka alla noder en gång. Koplexitet O(n)
+
+
+int minDepth(const BSTree tree)
+minDepth använder sig av numberOfNodes som har komplexiteten O(n)
+och funktionen i sig har komplexiteten O(1) så komplexiteten blir O(n)
+
+
+void balanceTree(BSTree *tree)
+Funktionen använder sig av flera funktioner som jag redan förklarat. Funktionen
+i sig har komplexiteten O(1) men använder sig av funktioner som både har
+komplexiteten O(n) och O(log(n)) men ingen av funktionerna anropar varandra
+rekursivt eller i en loop så
+största komplexiteten blir O(n)
+
+
+
+int isBalanced(const BSTree tree)
+Anropar 2 funktioner med koplexiteten O(n)
+Komplexitet O(n)
+
+
+void freeTree(BSTree *tree)
+Besöker alla noder en gång och tar bort dem. Komplexitet O(n)
+
+
+
+
+
